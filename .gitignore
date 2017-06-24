@@ -100,3 +100,4 @@ ENV/
 
 bin/
 include/
+config.yml

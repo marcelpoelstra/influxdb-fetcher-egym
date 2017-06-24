@@ -1,0 +1,5 @@
+egym_email: <your email address>
+egym_password: <your password>
+influxdb_name: <name of influxdb>
+influxdb_url: <url of influxdb>
+
