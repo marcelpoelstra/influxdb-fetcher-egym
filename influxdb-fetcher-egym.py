@@ -23,18 +23,57 @@ class InfluxDbFetcherEgym(object):
         api = egym.Api(email=self.config['egym_email'],
                       password=self.config['egym_password'])
         sessions = api.GetUserSessions(date.today() - timedelta(days=7), date.today())
-        for session in sessions:
-            data = api.GetSessionData(session)
+        for Session in sessions:
+            data = api.GetSessionData(Session)
             points = data.getPoints()
-            isodate = data.getIsoDate()
-            self.addToInfluxDb(isodate, points)
+            sessiondate = data.getSessionDate()
+            exercisedata = data.getExercises()
+            for Exercise in exercisedata:
+                created = Exercise.getCreated() 
+                exerciseid = Exercise.getExerciseId()
+                generalexerciseid = Exercise.getGeneralExerciseId()
+                uniqueexerciseclientid = Exercise.getUniqueExerciseClientId()
+                exercisetype = Exercise.getExerciseType()
+                datasource = Exercise.getDataSource()
+                done = Exercise.getDone()
+                points = Exercise.getExPoints()
+                duration = Exercise.getDuration()
+                targetspeed = Exercise.getTargetSpeed()
+                distance = Exercise.getDistance()
+                setsdata = Exercise.getSets()
+                if not setsdata:
+                    settype = "N/A"
+                    numofreps = 0
+                    weight = 0.0
+                    self.addToInfluxDb(created, generalexerciseid, exercisetype, exerciseid, datasource, done, points, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight)
 
-    def addToInfluxDb(self, isodate, points):
+                else:
+                    for Set in setsdata:
+                        settype = Set.getSetType()
+                        numofreps = Set.getReps()
+                        weight = Set.getWeight()
+                        self.addToInfluxDb(created, generalexerciseid, exercisetype, exerciseid, datasource, done, points, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight)
+
+    
+
+    def addToInfluxDb(self, created, generalexerciseid, exercisetype, exerciseid, datasource, done, points, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight):
         json_body = [{
                         "measurement": "egym",
-                        "time": isodate,
+                        "time": created,
                         "fields": {
-                            "value": points
+                            "ExerciseID": exerciseid,
+                            "GeneralExerciseID": generalexerciseid,
+                            "UniqueExerciseClientId": uniqueexerciseclientid,
+                            "ExerciceType": exercisetype,
+                            "Datasource" : datasource,
+                            "Points" : points,
+                            "Duration" : duration,
+                            "Targetspeed" : targetspeed,
+                            "Distance" : distance,
+                            "Done": done,
+                            "SetType": settype,
+                            "NumberOfReps": numofreps,
+                            "Weight": weight,
                             }
                     }]
         client = InfluxDBClient(self.config['influx_host'], 
