@@ -29,7 +29,7 @@ class InfluxDbFetcherEgym(object):
             sessiondate = data.getSessionDate()
             exercisedata = data.getExercises()
             for Exercise in exercisedata:
-                created = Exercise.getCreated() 
+                created = (Exercise.getCreated() * 1000000 )
                 exerciseid = Exercise.getExerciseId()
                 generalexerciseid = Exercise.getGeneralExerciseId()
                 uniqueexerciseclientid = Exercise.getUniqueExerciseClientId()
