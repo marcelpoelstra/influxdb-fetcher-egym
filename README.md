@@ -1,5 +1,5 @@
 # influxdb-fetcher-egym
-Script to fetch e-gym (www.egym.de) data and put it into influxdb
+Script to fetch e-Gym (www.egym.de) data and put it into influxdb
 
 
 This project is forked from the apparently dormant project bitstacker/influxdb-fetcher-egym
