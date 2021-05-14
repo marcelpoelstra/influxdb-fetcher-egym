@@ -36,7 +36,7 @@ class InfluxDbFetcherEgym(object):
                 exercisetype = Exercise.getExerciseType()
                 datasource = Exercise.getDataSource()
                 done = Exercise.getDone()
-                points = Exercise.getExPoints()
+                expoints = Exercise.getExPoints()
                 duration = Exercise.getDuration()
                 targetspeed = Exercise.getTargetSpeed()
                 distance = Exercise.getDistance()
@@ -45,33 +45,33 @@ class InfluxDbFetcherEgym(object):
                     settype = "N/A"
                     numofreps = 0
                     weight = 0.0
-                    self.addToInfluxDb(created, generalexerciseid, exercisetype, exerciseid, datasource, done, points, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight)
+                    self.addToInfluxDb(created, generalexerciseid, exercisetype, exerciseid, datasource, done, expoints, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight)
 
                 else:
                     for Set in setsdata:
                         settype = Set.getSetType()
                         numofreps = Set.getReps()
                         weight = Set.getWeight()
-                        self.addToInfluxDb(created, generalexerciseid, exercisetype, exerciseid, datasource, done, points, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight)
+                        self.addToInfluxDb(created, generalexerciseid, exercisetype, exerciseid, datasource, done, expoints, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight)
 
-    
-
-    def addToInfluxDb(self, created, generalexerciseid, exercisetype, exerciseid, datasource, done, points, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight):
+    def addToInfluxDb(self, created, generalexerciseid, exercisetype, exerciseid, datasource, done, expoints, uniqueexerciseclientid, duration, targetspeed, distance, settype, numofreps, weight):
         json_body = [{
-                        "measurement": "egym",
+                        "measurement": "egymdata",
                         "time": created,
+                        "tags": {
+                            "GeneralExerciseID": generalexerciseid,
+                            "ExerciseType": exercisetype,
+                            "Datasource" : datasource,
+                            "Done": done,
+                            "SetType": settype,
+                            },
                         "fields": {
                             "ExerciseID": exerciseid,
-                            "GeneralExerciseID": generalexerciseid,
                             "UniqueExerciseClientId": uniqueexerciseclientid,
-                            "ExerciceType": exercisetype,
-                            "Datasource" : datasource,
-                            "Points" : points,
+                            "Exercise Points" : expoints,
                             "Duration" : duration,
                             "Targetspeed" : targetspeed,
                             "Distance" : distance,
-                            "Done": done,
-                            "SetType": settype,
                             "NumberOfReps": numofreps,
                             "Weight": weight,
                             }
